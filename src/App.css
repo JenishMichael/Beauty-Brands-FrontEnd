@@ -1,0 +1,12 @@
+d {
+  color: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  flex-direction: row;
+  z-index: 1000;
+  border: none;
+}
