@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 const FooterContainer = styled("div")`
   background-color: #000;
   color: #fff;
-  padding: 32px 16px; /* 2rem 1rem -> 32px 16px */
+  padding: 32px 16px;
   text-align: center;
 `;
 
@@ -25,7 +25,7 @@ const Copyright = styled("p")`
   margin-top: 24px;
 `;
 
-export function Footer() {
+export function DataCollectionFooter() {
   return (
     <FooterContainer>
       <BrandTitle>Beauty Brands</BrandTitle>

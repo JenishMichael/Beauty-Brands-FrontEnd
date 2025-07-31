@@ -1,11 +1,22 @@
 import { Box } from "@mui/material";
-import { ProductCard } from "./ProductCard"; // adjust path
-import productImg from "../../assets/product.jpeg"; // shared image
+import { styled } from "@mui/material/styles";
+import { ProductCard } from "./ProductCard";
+import productImg from "../../assets/product.jpeg";
+
+const ProductGrid = styled(Box)`
+  margin: 0 auto;
+  max-width: 1700px;
+  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+`;
 
 const productList = [
   {
     id: 1,
-    title: "Swiss Beauty Lip Gloss",
+    title: "Swiss Beauty Lip GlossSwiss Beauty Lip GlossSwiss Beauty Lip Gloss",
     category: "Cosmetics",
     location: "Delhi, India",
     image: productImg,
@@ -89,17 +100,9 @@ const productList = [
   },
 ];
 
-export const ProductList = () => {
+export function ProductList() {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 3,
-        justifyContent: "center",
-        padding: "20px",
-      }}
-    >
+    <ProductGrid>
       {productList.map((product) => (
         <ProductCard
           key={product.id}
@@ -110,6 +113,6 @@ export const ProductList = () => {
           image={product.image}
         />
       ))}
-    </Box>
+    </ProductGrid>
   );
-};
+}

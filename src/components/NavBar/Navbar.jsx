@@ -7,8 +7,28 @@ import { SearchBar } from "./SearchBar";
 import { CategoryNavbar } from "./CategoryNavbar";
 import { useNavigate } from "react-router-dom";
 
+// const DesktopView = styled("div")`
+//   @media (max-width: 768px) {
+//     display: none;
+//   }
+// `;
+
 const DesktopView = styled("div")`
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
   @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const MobileView = styled("div")`
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  @media (min-width: 769px) {
     display: none;
   }
 `;
@@ -77,11 +97,11 @@ const ContactButton = styled("button")`
   }
 `;
 
-const MobileView = styled("div")`
-  @media (min-width: 769px) {
-    display: none;
-  }
-`;
+// const MobileView = styled("div")`
+//   @media (min-width: 769px) {
+//     display: none;
+//   }
+// `;
 
 const FirstRow = styled("div")`
   width: 100%;

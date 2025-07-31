@@ -1,15 +1,46 @@
 import { useForm } from "react-hook-form";
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Paper,
-  useTheme,
-} from "@mui/material";
+import { Box, TextField, Button, Typography, Paper } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
-export const Contact = () => {
-  const theme = useTheme();
+const Container = styled(Box)`
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+`;
+
+const StyledPaper = styled(Paper)`
+  padding: 3rem 2rem;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 16px;
+  background-color: #fff;
+`;
+
+const FormTitle = styled(Typography)`
+  text-align: center;
+  color: #4b0082;
+  font-weight: 700;
+`;
+
+const FormDescription = styled(Typography)`
+  color: #666;
+  margin-bottom: 1.5rem;
+  text-align: center;
+`;
+
+const SubmitButton = styled(Button)`
+  background-color: #4b0082;
+  color: #fff;
+  font-weight: 600;
+  padding: 10px;
+  &:hover {
+    background-color: #37006b;
+  }
+`;
+
+export function Contact() {
   const {
     register,
     handleSubmit,
@@ -23,41 +54,16 @@ export const Contact = () => {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "80vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "2rem",
-      }}
-    >
-      <Paper
-        elevation={6}
-        sx={{
-          padding: "3rem 2rem",
-          width: "100%",
-          maxWidth: "500px",
-          borderRadius: "16px",
-          backgroundColor: "#fff",
-        }}
-      >
-        <Typography
-          variant="h4"
-          fontWeight={700}
-          gutterBottom
-          sx={{ textAlign: "center", color: "#4b0082" }}
-        >
+    <Container>
+      <StyledPaper elevation={6}>
+        <FormTitle variant="h4" gutterBottom>
           Contact Us
-        </Typography>
+        </FormTitle>
 
-        <Typography
-          variant="body2"
-          sx={{ color: "#666", mb: 3, textAlign: "center" }}
-        >
+        <FormDescription variant="body2">
           Got a question or want to list your brand? Fill out the form and we’ll
           get back to you!
-        </Typography>
+        </FormDescription>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <TextField
@@ -98,22 +104,9 @@ export const Contact = () => {
             sx={{ mb: 3 }}
           />
 
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{
-              backgroundColor: "#4b0082",
-              color: "#fff",
-              fontWeight: 600,
-              padding: "10px",
-              "&:hover": {
-                backgroundColor: "#37006b",
-              },
-            }}
-          >
+          <SubmitButton type="submit" variant="contained" fullWidth>
             Send Message
-          </Button>
+          </SubmitButton>
 
           {isSubmitSuccessful && (
             <Typography sx={{ mt: 2, color: "green", textAlign: "center" }}>
@@ -121,7 +114,7 @@ export const Contact = () => {
             </Typography>
           )}
         </form>
-      </Paper>
-    </Box>
+      </StyledPaper>
+    </Container>
   );
-};
+}

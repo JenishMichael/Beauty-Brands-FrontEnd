@@ -2,6 +2,7 @@ d {
   color: white;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   position: sticky;
@@ -9,4 +10,12 @@ d {
   flex-direction: row;
   z-index: 1000;
   border: none;
+  font-size: 50px;
+  background-color: aqua;
+  max-width: 1500px;
+  margin: 0 auto;
+  /* Purple */
+  background-color: #4b0082;
+
+  padding: 16px;
 }

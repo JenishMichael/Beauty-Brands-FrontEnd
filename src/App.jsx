@@ -7,13 +7,16 @@ import { Footer } from "./components/Footer/footer";
 import { ProductList } from "./components/Product/ProductList";
 import { ProductDetails } from "./components/Product/ProductDetails";
 import { Contact } from "./components/Contact/Contact ";
+import { DataCollectionHeader } from "./components/DataCollectionFromClient/DataCollectionHeader";
+import { DataCollectionFormPage } from "./components/DataCollectionFromClient/DataCollectionFormPage";
+import { DataCollectionFooter } from "./components/DataCollectionFromClient/DataCollectionFooter";
 
 function App() {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <>
-      <Routes>
+      {/* <Routes>
         <Route
           path="/"
           element={
@@ -50,6 +53,18 @@ function App() {
               <CategoryNavbar />
               <Contact />
               <Footer />
+            </>
+          }
+        />
+      </Routes> */}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <DataCollectionHeader></DataCollectionHeader>
+              <DataCollectionFormPage></DataCollectionFormPage>
+              <DataCollectionFooter></DataCollectionFooter>
             </>
           }
         />
