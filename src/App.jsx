@@ -10,6 +10,7 @@ import { Contact } from "./components/Contact/Contact ";
 import { DataCollectionHeader } from "./components/DataCollectionFromClient/DataCollectionHeader";
 import { DataCollectionFormPage } from "./components/DataCollectionFromClient/DataCollectionFormPage";
 import { DataCollectionFooter } from "./components/DataCollectionFromClient/DataCollectionFooter";
+import { DetailsSaved } from "./components/DataCollectionFromClient/DetailsSaved";
 
 function App() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,6 +65,16 @@ function App() {
             <>
               <DataCollectionHeader></DataCollectionHeader>
               <DataCollectionFormPage></DataCollectionFormPage>
+              <DataCollectionFooter></DataCollectionFooter>
+            </>
+          }
+        />
+        <Route
+          path="/sucess"
+          element={
+            <>
+              <DataCollectionHeader></DataCollectionHeader>
+              <DetailsSaved />
               <DataCollectionFooter></DataCollectionFooter>
             </>
           }

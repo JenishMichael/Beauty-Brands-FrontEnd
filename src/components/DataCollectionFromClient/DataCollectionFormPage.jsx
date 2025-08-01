@@ -1,5 +1,12 @@
 import { useForm } from "react-hook-form";
 import { styled } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { Loading } from "./Loading";
+import { FetchingFailedScreen } from "./FetchingFailedScreen";
+import { NoDataScreen } from "./NoDataScreen";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+import { useNavigate } from "react-router-dom";
 
 // Styled Components
 const FormTitle = styled("h2")`
@@ -43,7 +50,7 @@ const Label = styled("label")`
   @media (max-width: 500px) {
     flex: 0 0 auto;
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 15px;
   }
 
   span {
@@ -108,20 +115,139 @@ const SubmitButton = styled("button")`
     background-color: #37006b;
     transform: scale(1.05);
   }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
 export function DataCollectionFormPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     trigger,
+    reset,
+    watch,
   } = useForm();
 
-  const onSubmit = (data) => {
-    alert("Data Collected");
-    console.log("Form Data:", data);
+  const navigate = useNavigate();
+
+  const onSubmit = async (data) => {
+    const selectedCategoryIds = data.categoryIds || [];
+    const selectedSubCategoryIds = data.subCategoryIds || [];
+
+    const isValid = selectedCategoryIds.every((catId) =>
+      subCategories.some(
+        (sub) =>
+          sub.categoryId === Number(catId) &&
+          selectedSubCategoryIds.includes(String(sub.subCategoryId))
+      )
+    );
+
+    if (!isValid) {
+      alert(
+        "Please select at least one subcategory for each selected category."
+      );
+      return;
+    }
+
+    const trimmedData = Object.fromEntries(
+      Object.entries({
+        ...data,
+        categoryIds: selectedCategoryIds.map(Number),
+        subCategoryIds: selectedSubCategoryIds.map(Number),
+      }).map(([key, value]) => [
+        key,
+        typeof value === "string" ? value.trim() : value,
+      ])
+    );
+
+    try {
+      const res = await axios.post(
+        `${BASE_URL}/api/v1/listings/save`,
+        trimmedData
+      );
+      console.log("Saved Data:", res.data);
+      reset();
+      navigate("/sucess");
+    } catch (error) {
+      if (error.response) {
+        const status = error.response.data.status;
+        const message = error.response.data.message;
+        alert(`Error ${status}: ${message}`);
+      } else if (error.request) {
+        alert("Server not responding. Please try again later.");
+      } else {
+        alert("An unexpected error occurred.");
+        console.error(error);
+      }
+    }
   };
+
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [fetchFailed, setFetchFailed] = useState(false);
+
+  const noData =
+    !loading &&
+    (categories.length === 0 || subCategories.length === 0) &&
+    !fetchFailed;
+
+  const selectedCategoryIds = watch("categoryIds") || [];
+  const subCategoriesBySelected = categories
+    .filter((cat) => selectedCategoryIds.includes(String(cat.categoryId)))
+    .map((cat) => ({
+      ...cat,
+      subCategories: subCategories.filter(
+        (sub) => sub.categoryId === cat.categoryId
+      ),
+    }));
+
+  // useEffect For Fetching Both Category And SubCategory From DataBase
+  useEffect(() => {
+    Promise.all([
+      axios.get(`${BASE_URL}/api/v1/categories/active`),
+      axios.get(`${BASE_URL}/api/v1/subCategories/active`),
+    ])
+      .then(([catRes, subCatRes]) => {
+        setLoading(false);
+        setCategories(catRes.data);
+        setSubCategories(subCatRes.data);
+      })
+      .catch((error) => {
+        setLoading(false);
+        setFetchFailed(true);
+        const message = error.response?.data?.message || "Server error";
+        console.error(error);
+      });
+  }, []);
+
+  // UseEffect to trigger error of checkbox Category because onBlur doesnt work properly in CheckBoxes
+  useEffect(() => {
+    trigger("categoryIds");
+  }, [watch("categoryIds")]);
+
+  // UseEffect to trigger error of checkbox SubCategory
+  useEffect(() => {
+    trigger("subCategoryIds");
+  }, [watch("subCategoryIds")]);
+
+  //Loading Screen
+  if (loading) {
+    return <Loading />;
+  }
+
+  //FetchingFailedScreen Screen (if Error while getting Data from DB)
+  if (fetchFailed) {
+    return <FetchingFailedScreen />;
+  }
+
+  //If DB returns Empty Category or SubCategory
+  if (noData) {
+    return <NoDataScreen />;
+  }
 
   return (
     <FormWrapper>
@@ -225,11 +351,17 @@ export function DataCollectionFormPage() {
 
           {/* WhatsApp Number */}
           <FieldRow>
-            <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
+            <Label htmlFor="whatsappNumber">
+              WhatsApp Number<span>*</span>
+            </Label>
             <Input
               id="whatsappNumber"
               type="tel"
               {...register("whatsappNumber", {
+                required: {
+                  value: true,
+                  message: "WhatsApp Number is Required",
+                },
                 pattern: {
                   value: /^[6-9]\d{9}$/,
                   message: "Enter a valid 10-digit Indian mobile number",
@@ -279,53 +411,118 @@ export function DataCollectionFormPage() {
           </FieldRow>
           {errors.website && <ErrorText>{errors.website.message}</ErrorText>}
 
-          {/* Category */}
-          <FieldRow>
-            <Label htmlFor="categoryId">
-              Category<span>*</span>
+          <HrTag style={{ marginTop: "50px" }} />
+          {/* Category Checkboxes */}
+          <FieldRow style={{ alignItems: "flex-start" }}>
+            <Label>
+              Categories<span>*</span>
             </Label>
-            <Select
-              id="categoryId"
-              {...register("categoryId", {
-                required: "Please select a category",
-              })}
-              onBlur={() => trigger("categoryId")}
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "6px" }}
             >
-              <option value="">-- Select Category --</option>
-              <option value="1">Beauty Salon</option>
-              <option value="2">Tattoo Studio</option>
-            </Select>
+              {categories.map((category) => (
+                <label
+                  key={category.categoryId}
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <input
+                    type="checkbox"
+                    value={category.categoryId}
+                    {...register("categoryIds", {
+                      validate: (value) =>
+                        (value && value.length > 0) ||
+                        "Please select at least one category",
+                    })}
+                  />
+                  <span style={{ marginLeft: "8px" }}>
+                    {category.categoryName}
+                  </span>
+                </label>
+              ))}
+            </div>
           </FieldRow>
-          {errors.categoryId && (
-            <ErrorText>{errors.categoryId.message}</ErrorText>
+          {errors.categoryIds && (
+            <ErrorText>{errors.categoryIds.message}</ErrorText>
           )}
+          {/* SubCategory */}
+          {selectedCategoryIds.length > 0 && (
+            <>
+              <HrTag style={{ marginTop: "50px" }} />
+              <FieldRow style={{ alignItems: "flex-start" }}>
+                <Label>
+                  Sub Categories<span>*</span>
+                </Label>
 
-          {/* Subcategory */}
-          <FieldRow>
-            <Label htmlFor="subCategoryId">
-              Subcategory<span>*</span>
-            </Label>
-            <Select
-              id="subCategoryId"
-              {...register("subCategoryId", {
-                required: "Please select a subcategory",
-              })}
-              onBlur={() => trigger("subCategoryId")}
-            >
-              <option value="">-- Select Subcategory --</option>
-              <option value="101">Hair Styling</option>
-              <option value="102">Body Art</option>
-            </Select>
-          </FieldRow>
-          {errors.subCategoryId && (
-            <ErrorText>{errors.subCategoryId.message}</ErrorText>
+                <div style={{ flex: 1 }}>
+                  {subCategoriesBySelected.map((cat) => (
+                    <div key={cat.categoryId} style={{ marginBottom: "1rem" }}>
+                      <div style={{ fontWeight: 600, color: "#4b0082" }}>
+                        {cat.categoryName}
+                      </div>
+                      {cat.subCategories.length > 0 ? (
+                        cat.subCategories.map((sub) => (
+                          <label
+                            key={sub.subCategoryId}
+                            style={{
+                              display: "block",
+                              marginLeft: "10px",
+                              marginTop: "4px",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              value={sub.subCategoryId}
+                              {...register("subCategoryIds", {
+                                validate: () => {
+                                  const selectedCategoryIds =
+                                    watch("categoryIds") || [];
+                                  const selectedSubCategoryIds =
+                                    watch("subCategoryIds") || [];
+
+                                  const isValid = selectedCategoryIds.every(
+                                    (catId) =>
+                                      subCategories.some(
+                                        (sub) =>
+                                          sub.categoryId === Number(catId) &&
+                                          selectedSubCategoryIds.includes(
+                                            String(sub.subCategoryId)
+                                          )
+                                      )
+                                  );
+
+                                  return (
+                                    isValid ||
+                                    "Please select at least one subcategory for each selected category."
+                                  );
+                                },
+                              })}
+                            />
+
+                            {sub.subCategoryName}
+                          </label>
+                        ))
+                      ) : (
+                        <p style={{ marginLeft: "10px", color: "gray" }}>
+                          No subcategories available.
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </FieldRow>
+              {errors.subCategoryIds && (
+                <ErrorText>{errors.subCategoryIds.message}</ErrorText>
+              )}
+            </>
           )}
 
           {/* Submit Button */}
         </BoxAroundField>
 
         <ButtonRow>
-          <SubmitButton type="submit">Submit</SubmitButton>
+          <SubmitButton type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </SubmitButton>
         </ButtonRow>
       </form>
     </FormWrapper>
