@@ -39,7 +39,9 @@ export function Loading() {
   return (
     <LoadingContainer>
       <Spinner />
-      <Message>Please wait a moment while we load the content...</Message>
+      <Message>
+        Loading content... This may take a minute. Thank you for your patience!
+      </Message>
     </LoadingContainer>
   );
 }
