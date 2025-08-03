@@ -258,8 +258,8 @@ export function DataCollectionFormPage() {
   return (
     <FormWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FormTitle>Business Data Collection Form</FormTitle>
-        <HrTag />
+        {/* <FormTitle>Business Data Collection Form</FormTitle>
+        <HrTag /> */}
         <BoxAroundField>
           {/* Business Name */}
           <FieldRow>
