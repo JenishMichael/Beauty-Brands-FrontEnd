@@ -14,12 +14,16 @@ const Title = styled("div")({
   fontSize: "24px", // 1.5rem = 24px
   color: "#cc0000",
   marginBottom: "16px", // 1rem
+  textAlign: "center",
 });
 
 const Description = styled("p")({
+  paddingLeft: "20px",
+  paddingRight: "20px",
   color: "#555",
   fontSize: "16px", // 1rem
   marginBottom: "24px", // 1.5rem
+  textAlign: "center",
 });
 
 const RetryButton = styled("button")({

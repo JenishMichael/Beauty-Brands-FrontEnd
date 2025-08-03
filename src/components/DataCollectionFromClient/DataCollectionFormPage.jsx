@@ -164,6 +164,10 @@ export function DataCollectionFormPage() {
     );
 
     try {
+      // const res = await axios.post(
+      //   `http://localhost:8080/api/v1/listings/save`,
+      //   trimmedData
+      // );
       const res = await axios.post(
         `${BASE_URL}/api/v1/listings/save`,
         trimmedData
@@ -210,6 +214,8 @@ export function DataCollectionFormPage() {
     Promise.all([
       axios.get(`${BASE_URL}/api/v1/categories/active`),
       axios.get(`${BASE_URL}/api/v1/subCategories/active`),
+      // axios.get(`http://localhost:8080/api/v1/categories/active`),
+      // axios.get(`http://localhost:8080/api/v1/subCategories/active`),
     ])
       .then(([catRes, subCatRes]) => {
         setLoading(false);
@@ -262,6 +268,7 @@ export function DataCollectionFormPage() {
             </Label>
             <Input
               id="listingTitle"
+              placeholder="Enter business name"
               {...register("listingTitle", {
                 required: "Business Name is required",
               })}
@@ -280,6 +287,7 @@ export function DataCollectionFormPage() {
             <TextArea
               rows={3}
               id="description"
+              placeholder="Briefly describe your business"
               {...register("description", {
                 required: "Description is required",
                 minLength: { value: 10, message: "At least 10 characters" },
@@ -299,9 +307,10 @@ export function DataCollectionFormPage() {
             <TextArea
               rows={2}
               id="address"
+              placeholder="Enter full business address"
               {...register("address", {
                 required: "Address is required",
-                minLength: { value: 10, message: "At least 10 characters" },
+                minLength: { value: 3, message: "At least 3 characters" },
               })}
               onBlur={() => trigger("address")}
             />
@@ -315,6 +324,7 @@ export function DataCollectionFormPage() {
             </Label>
             <Input
               id="city"
+              placeholder="Enter city"
               {...register("city", {
                 required: "City is required",
                 pattern: {
@@ -334,6 +344,7 @@ export function DataCollectionFormPage() {
             </Label>
             <Input
               id="contactNumber"
+              placeholder="Enter 10-digit contact number"
               type="tel"
               {...register("contactNumber", {
                 required: "Contact number is required",
@@ -356,6 +367,7 @@ export function DataCollectionFormPage() {
             </Label>
             <Input
               id="whatsappNumber"
+              placeholder="Enter WhatsApp number"
               type="tel"
               {...register("whatsappNumber", {
                 required: {
@@ -382,6 +394,7 @@ export function DataCollectionFormPage() {
             <Input
               id="email"
               type="email"
+              placeholder="Enter email address"
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -394,22 +407,16 @@ export function DataCollectionFormPage() {
           </FieldRow>
           {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
 
-          {/* Website */}
           <FieldRow>
             <Label htmlFor="website">Website</Label>
             <Input
               id="website"
-              type="url"
-              {...register("website", {
-                pattern: {
-                  value: /^(https?:\/\/)?(www\.)?[a-z0-9-]+\.[a-z]{2,}(\/.*)?$/,
-                  message: "Enter a valid URL",
-                },
-              })}
+              type="text"
+              placeholder="Optional - Enter website name or URL"
+              {...register("website")}
               onBlur={() => trigger("website")}
             />
           </FieldRow>
-          {errors.website && <ErrorText>{errors.website.message}</ErrorText>}
 
           <HrTag style={{ marginTop: "50px" }} />
           {/* Category Checkboxes */}

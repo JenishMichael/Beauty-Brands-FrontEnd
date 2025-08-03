@@ -28,8 +28,11 @@ const Spinner = styled("div")({
 });
 
 const Message = styled("div")({
+  paddingLeft: "20px",
+  paddingRight: "20px",
   fontSize: "17.6px",
   color: "#333",
+  textAlign: "center",
 });
 
 export function Loading() {

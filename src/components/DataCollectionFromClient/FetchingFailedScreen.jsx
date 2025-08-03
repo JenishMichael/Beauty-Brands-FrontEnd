@@ -16,6 +16,9 @@ export function FetchingFailedScreen() {
           fontSize: "1.5rem",
           color: "#cc0000",
           marginBottom: "1rem",
+          paddingLeft: "20px",
+          paddingRight: "20px",
+          textAlign: "center",
         }}
       >
         Unable to load form data
@@ -25,6 +28,7 @@ export function FetchingFailedScreen() {
           color: "#555",
           fontSize: "1rem",
           marginBottom: "1.5rem",
+          textAlign: "center",
         }}
       >
         Try again after a few moments.
