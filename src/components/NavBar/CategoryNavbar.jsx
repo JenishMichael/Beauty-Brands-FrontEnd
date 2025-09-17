@@ -1,137 +1,6 @@
-// import { styled } from "@mui/material";
-// import SpaIcon from "@mui/icons-material/Spa";
-// import FaceRetouchingNaturalIcon from "@mui/icons-material/FaceRetouchingNatural";
-// import ContentCutIcon from "@mui/icons-material/ContentCut";
-// import LocalFloristIcon from "@mui/icons-material/LocalFlorist";
-// import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
-// import HairDryerIcon from "@mui/icons-material/DryCleaning"; // For hair styling
-// import BrushIcon from "@mui/icons-material/Brush"; // For makeup
-// import HealingIcon from "@mui/icons-material/Healing"; // For skin clinic
-// import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions"; // For wellness
-// import NightlifeIcon from "@mui/icons-material/Nightlife"; // For tattoo
-
-// const ScrollContainer = styled("div")`
-//   width: 100%;
-//   display: flex;
-//   overflow-x: auto;
-//   gap: 30px;
-//   padding: 10px 30px;
-//   background-color: black;
-//   justify-content: flex-start;
-
-//   @media (min-width: 1024px) {
-//     justify-content: center;
-//   }
-// `;
-
-// const ItemContainer = styled("div")`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: start;
-//   background-color: black;
-// `;
-
-// const Circle = styled("div")`
-//   width: 70px;
-//   height: 70px;
-//   background-color: white;
-//   border-radius: 50px;
-//   overflow: hidden;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   transition: transform 0.3s ease;
-
-//   &:hover {
-//     transform: scale(1.1);
-//   }
-
-//   @media (min-width: 768px) {
-//     width: 85px;
-//     height: 85px;
-//   }
-// `;
-
-// const Title = styled("div")`
-//   margin-top: 5px;
-//   font-size: 14px;
-//   font-weight: 500;
-//   color: white;
-//   text-align: center;
-// `;
-
-// export function CategoryNavbar() {
-//   const items = [
-//     {
-//       id: 1,
-//       title: "Beauty Salon",
-//       icon: (
-//         <FaceRetouchingNaturalIcon sx={{ fontSize: 36, color: "#4b0082" }} />
-//       ),
-//     },
-//     {
-//       id: 2,
-//       title: "Spa & Wellness",
-//       icon: <SpaIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-//     },
-//     {
-//       id: 3,
-//       title: "Nail Studio",
-//       icon: <ContentCutIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-//     },
-//     {
-//       id: 4,
-//       title: "Skin Clinic",
-//       icon: <HealingIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-//     },
-//     {
-//       id: 5,
-//       title: "Tattoo Studio",
-//       icon: <NightlifeIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-//     },
-//     {
-//       id: 6,
-//       title: "Hair Styling",
-//       icon: <HairDryerIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-//     },
-//     {
-//       id: 7,
-//       title: "Makeup Artist",
-//       icon: <BrushIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-//     },
-//     {
-//       id: 8,
-//       title: "Henna Design",
-//       icon: <LocalFloristIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-//     },
-//     {
-//       id: 9,
-//       title: "Wellness Coach",
-//       icon: <EmojiEmotionsIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-//     },
-//     {
-//       id: 10,
-//       title: "Personal Grooming",
-//       icon: <EmojiPeopleIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-//     },
-//   ];
-
-//   return (
-//     <ScrollContainer>
-//       {items.map((item) => (
-//         <ItemContainer key={item.id}>
-//           <Circle>{item.icon}</Circle>
-//           <Title>{item.title}</Title>
-//         </ItemContainer>
-//       ))}
-//     </ScrollContainer>
-//   );
-// }
-
 // CategoryNavbar.jsx
 import { styled } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SpaIcon from "@mui/icons-material/Spa";
 import FaceRetouchingNaturalIcon from "@mui/icons-material/FaceRetouchingNatural";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
@@ -142,6 +11,8 @@ import BrushIcon from "@mui/icons-material/Brush";
 import HealingIcon from "@mui/icons-material/Healing";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import NightlifeIcon from "@mui/icons-material/Nightlife";
+import axios from "axios";
+import { FilteredSubCategory } from "../Product/FilterSubCategory";
 
 const ScrollContainer = styled("div")`
   width: 100%;
@@ -163,6 +34,7 @@ const ItemContainer = styled("div")`
   justify-content: start;
   background-color: black;
   cursor: pointer;
+  width: 250px;
 `;
 
 const Circle = styled("div")`
@@ -192,6 +64,7 @@ const Title = styled("div")`
   font-weight: 500;
   color: white;
   text-align: center;
+  word-wrap: break-word; /* wraps long titles to next line */
 `;
 
 const SubCategoryContainer = styled("div")`
@@ -232,150 +105,88 @@ const ClearButton = styled("button")`
 
 export function CategoryNavbar() {
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [filteredSubCategories, setFilteredSubCategories] = useState([]);
 
-  const items = [
-    {
-      id: 1,
-      title: "Beauty Salon",
-      icon: (
-        <FaceRetouchingNaturalIcon sx={{ fontSize: 36, color: "#4b0082" }} />
-      ),
-      subcategories: [
-        "Haircuts & Styling",
-        "Hair Coloring",
-        "Bridal Makeup",
-        "Party Makeup",
-        "Saree Draping",
-      ],
-    },
-    {
-      id: 2,
-      title: "Spa & Wellness",
-      icon: <SpaIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-      subcategories: [
-        "Full Body Massage",
-        "Aromatherapy",
-        "Body Scrubs",
-        "Steam & Sauna",
-        "Reflexology",
-      ],
-    },
-    {
-      id: 3,
-      title: "Nail Studio",
-      icon: <ContentCutIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-      subcategories: [
-        "Gel Nails",
-        "Acrylic Nails",
-        "Nail Extensions",
-        "Cuticle Care",
-      ],
-    },
-    {
-      id: 4,
-      title: "Skin Clinic",
-      icon: <HealingIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-      subcategories: [
-        "Chemical Peels",
-        "Laser Hair Removal",
-        "Scar Treatment",
-        "Botox & Fillers",
-      ],
-    },
-    {
-      id: 5,
-      title: "Tattoo Studio",
-      icon: <NightlifeIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-      subcategories: [
-        "Permanent Tattoos",
-        "Temporary Tattoos",
-        "Tattoo Cover-up",
-        "Piercing",
-      ],
-    },
-    {
-      id: 6,
-      title: "Hair Styling",
-      icon: <HairDryerIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-      subcategories: [
-        "Keratin Treatment",
-        "Rebonding",
-        "Hair Smoothening",
-        "Hair Spa",
-      ],
-    },
-    {
-      id: 7,
-      title: "Makeup Artist",
-      icon: <BrushIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-      subcategories: [
-        "Bridal Makeup",
-        "Airbrush Makeup",
-        "Fashion Makeup",
-        "Personal Sessions",
-      ],
-    },
-    {
-      id: 8,
-      title: "Henna Design",
-      icon: <LocalFloristIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-      subcategories: [
-        "Bridal Mehndi",
-        "Arabic Designs",
-        "Festival Mehndi",
-        "Kids Mehndi",
-      ],
-    },
-    {
-      id: 9,
-      title: "Wellness Coach",
-      icon: <EmojiEmotionsIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-      subcategories: ["Yoga", "Naturopathy", "Meditation", "Holistic Healing"],
-    },
-    {
-      id: 10,
-      title: "Personal Grooming",
-      icon: <EmojiPeopleIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
-      subcategories: [
-        "Waxing",
-        "Threading",
-        "Beard Styling",
-        "Eyebrow Tinting",
-      ],
-    },
-  ];
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/api/v1/categories/active`)
+      .then((res) => setCategories(res.data))
+      .catch((err) => console.log("Error fetching categories:", err));
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/api/v1/subCategories/active`)
+      .then((res) => setSubCategories(res.data))
+      .catch((err) => console.log("Error fetching subCategories:", err));
+  }, []);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      setFilteredSubCategories(
+        subCategories.filter(
+          (sub) => sub.categoryId === selectedCategory.categoryId
+        )
+      );
+    } else {
+      setFilteredSubCategories([]);
+    }
+  }, [selectedCategory, subCategories]);
+
+  const categoryIcons = {
+    "Beauty Salon": (
+      <FaceRetouchingNaturalIcon sx={{ fontSize: 36, color: "#4b0082" }} />
+    ),
+    "Spa & Wellness": <SpaIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
+    "Nail Studio": <ContentCutIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
+    "Skin Clinic": <HealingIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
+    "Tattoo Studio": <NightlifeIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
+    "Hair Styling": <HairDryerIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
+    "Makeup Artist": <BrushIcon sx={{ fontSize: 36, color: "#4b0082" }} />,
+    "Henna Design": (
+      <LocalFloristIcon sx={{ fontSize: 36, color: "#4b0082" }} />
+    ),
+    "Wellness Coach": (
+      <EmojiEmotionsIcon sx={{ fontSize: 36, color: "#4b0082" }} />
+    ),
+    "Personal Grooming": (
+      <EmojiPeopleIcon sx={{ fontSize: 36, color: "#4b0082" }} />
+    ),
+  };
 
   const handleCategoryClick = (item) => {
-    setSelectedCategory((prev) => (prev?.title === item.title ? null : item));
+    setSelectedCategory((prev) =>
+      prev?.categoryId === item.categoryId ? null : item
+    );
   };
 
   return (
     <>
       <ScrollContainer>
-        {items.map((item) => (
+        {categories.map((item) => (
           <ItemContainer
-            key={item.id}
+            key={item.categoryId}
             onClick={() => handleCategoryClick(item)}
           >
-            <Circle>{item.icon}</Circle>
-            <Title>{item.title}</Title>
+            <Circle>
+              {categoryIcons[item.categoryName] || (
+                <FaceRetouchingNaturalIcon
+                  sx={{ fontSize: 36, color: "#4b0082" }}
+                />
+              )}
+            </Circle>
+            <Title>{item.categoryName}</Title>
           </ItemContainer>
         ))}
       </ScrollContainer>
 
-      {selectedCategory && (
-        <SubCategoryContainer>
-          <SubCategoryTitle>{selectedCategory.title} Services</SubCategoryTitle>
-          <SubCategoryList>
-            {selectedCategory.subcategories.map((sub, index) => (
-              <SubCategoryItem key={index}>{sub}</SubCategoryItem>
-            ))}
-          </SubCategoryList>
-          <ClearButton onClick={() => setSelectedCategory(null)}>
-            Clear Selection
-          </ClearButton>
-        </SubCategoryContainer>
-      )}
+      {/* Pass filteredSubCategories to FilterComponent */}
+      <FilteredSubCategory
+        subCategories={filteredSubCategories}
+        selectedCategory={selectedCategory}
+      />
     </>
   );
 }

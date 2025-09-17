@@ -134,8 +134,18 @@ export function DataCollectionFormPage() {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const selectedCategoryIds = data.categoryIds || [];
-    const selectedSubCategoryIds = data.subCategoryIds || [];
+    // ✅ Normalize checkbox values
+    const selectedCategoryIds = Array.isArray(data.categoryIds)
+      ? data.categoryIds
+      : data.categoryIds
+      ? [data.categoryIds]
+      : [];
+
+    const selectedSubCategoryIds = Array.isArray(data.subCategoryIds)
+      ? data.subCategoryIds
+      : data.subCategoryIds
+      ? [data.subCategoryIds]
+      : [];
 
     const isValid = selectedCategoryIds.every((catId) =>
       subCategories.some(
@@ -164,10 +174,6 @@ export function DataCollectionFormPage() {
     );
 
     try {
-      // const res = await axios.post(
-      //   `http://localhost:8080/api/v1/listings/save`,
-      //   trimmedData
-      // );
       const res = await axios.post(
         `${BASE_URL}/api/v1/listings/save`,
         trimmedData
@@ -199,7 +205,12 @@ export function DataCollectionFormPage() {
     (categories.length === 0 || subCategories.length === 0) &&
     !fetchFailed;
 
-  const selectedCategoryIds = watch("categoryIds") || [];
+  const selectedCategoryIds = Array.isArray(watch("categoryIds"))
+    ? watch("categoryIds")
+    : watch("categoryIds")
+    ? [watch("categoryIds")]
+    : [];
+
   const subCategoriesBySelected = categories
     .filter((cat) => selectedCategoryIds.includes(String(cat.categoryId)))
     .map((cat) => ({
@@ -214,19 +225,15 @@ export function DataCollectionFormPage() {
     Promise.all([
       axios.get(`${BASE_URL}/api/v1/categories/active`),
       axios.get(`${BASE_URL}/api/v1/subCategories/active`),
-      // axios.get(`http://localhost:8080/api/v1/categories/active`),
-      // axios.get(`http://localhost:8080/api/v1/subCategories/active`),
     ])
       .then(([catRes, subCatRes]) => {
         setLoading(false);
         setCategories(catRes.data);
         setSubCategories(subCatRes.data);
       })
-      .catch((error) => {
+      .catch(() => {
         setLoading(false);
         setFetchFailed(true);
-        const message = error.response?.data?.message || "Server error";
-        console.error(error);
       });
   }, []);
 
@@ -241,25 +248,15 @@ export function DataCollectionFormPage() {
   }, [watch("subCategoryIds")]);
 
   //Loading Screen
-  if (loading) {
-    return <Loading />;
-  }
+  if (loading) return <Loading />;
 
-  //FetchingFailedScreen Screen (if Error while getting Data from DB)
-  if (fetchFailed) {
-    return <FetchingFailedScreen />;
-  }
+  if (fetchFailed) return <FetchingFailedScreen />;
 
-  //If DB returns Empty Category or SubCategory
-  if (noData) {
-    return <NoDataScreen />;
-  }
+  if (noData) return <NoDataScreen />;
 
   return (
     <FormWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* <FormTitle>Business Data Collection Form</FormTitle>
-        <HrTag /> */}
         <BoxAroundField>
           {/* Business Name */}
           <FieldRow>
@@ -436,9 +433,17 @@ export function DataCollectionFormPage() {
                     type="checkbox"
                     value={category.categoryId}
                     {...register("categoryIds", {
-                      validate: (value) =>
-                        (value && value.length > 0) ||
-                        "Please select at least one category",
+                      validate: (value) => {
+                        const values = Array.isArray(value)
+                          ? value
+                          : value
+                          ? [value]
+                          : [];
+                        return (
+                          values.length > 0 ||
+                          "Please select at least one category"
+                        );
+                      },
                     })}
                   />
                   <span style={{ marginLeft: "8px" }}>
@@ -451,6 +456,7 @@ export function DataCollectionFormPage() {
           {errors.categoryIds && (
             <ErrorText>{errors.categoryIds.message}</ErrorText>
           )}
+
           {/* SubCategory */}
           {selectedCategoryIds.length > 0 && (
             <>
@@ -481,21 +487,33 @@ export function DataCollectionFormPage() {
                               value={sub.subCategoryId}
                               {...register("subCategoryIds", {
                                 validate: () => {
-                                  const selectedCategoryIds =
-                                    watch("categoryIds") || [];
-                                  const selectedSubCategoryIds =
-                                    watch("subCategoryIds") || [];
+                                  const selectedCategoryIds = Array.isArray(
+                                    watch("categoryIds")
+                                  )
+                                    ? watch("categoryIds")
+                                    : watch("categoryIds")
+                                    ? [watch("categoryIds")]
+                                    : [];
 
-                                  const isValid = selectedCategoryIds.every(
-                                    (catId) =>
+                                  const selectedSubCategoryIds = Array.isArray(
+                                    watch("subCategoryIds")
+                                  )
+                                    ? watch("subCategoryIds")
+                                    : watch("subCategoryIds")
+                                    ? [watch("subCategoryIds")]
+                                    : [];
+
+                                  const isValid =
+                                    selectedCategoryIds.length > 0 &&
+                                    selectedCategoryIds.every((catId) =>
                                       subCategories.some(
-                                        (sub) =>
-                                          sub.categoryId === Number(catId) &&
+                                        (s) =>
+                                          s.categoryId === Number(catId) &&
                                           selectedSubCategoryIds.includes(
-                                            String(sub.subCategoryId)
+                                            String(s.subCategoryId)
                                           )
                                       )
-                                  );
+                                    );
 
                                   return (
                                     isValid ||
@@ -522,10 +540,9 @@ export function DataCollectionFormPage() {
               )}
             </>
           )}
-
-          {/* Submit Button */}
         </BoxAroundField>
 
+        {/* Submit Button */}
         <ButtonRow>
           <SubmitButton type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Submitting..." : "Submit"}

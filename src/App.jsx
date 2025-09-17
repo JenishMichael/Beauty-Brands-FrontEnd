@@ -1,12 +1,12 @@
 import { Routes, Route } from "react-router-dom";
 import { useState } from "react";
 
-import { Navbar } from "./components/NavBar/Navbar";
-import { CategoryNavbar } from "./components/NavBar/CategoryNavbar";
-import { Footer } from "./components/Footer/Footer";
-import { ProductList } from "./components/Product/ProductList";
-import { ProductDetails } from "./components/Product/ProductDetails";
-import { Contact } from "./components/Contact/Contact ";
+// import { Navbar } from "./components/NavBar/Navbar";
+// import { CategoryNavbar } from "./components/NavBar/CategoryNavbar";
+// import { Footer } from "./components/Footer/Footer";
+// import { ProductList } from "./components/Product/ProductList";
+// import { ProductDetails } from "./components/Product/ProductDetails";
+// import { Contact } from "./components/Contact/Contact ";
 import { DataCollectionHeader } from "./components/DataCollectionFromClient/DataCollectionHeader";
 import { DataCollectionFormPage } from "./components/DataCollectionFromClient/DataCollectionFormPage";
 import { DataCollectionFooter } from "./components/DataCollectionFromClient/DataCollectionFooter";
