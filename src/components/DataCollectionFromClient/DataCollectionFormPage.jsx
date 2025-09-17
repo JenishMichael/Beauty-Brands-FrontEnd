@@ -229,6 +229,8 @@ export function DataCollectionFormPage() {
       axios.get("/api/v1/subCategories/active"),
     ])
       .then(([catRes, subCatRes]) => {
+        console.log("Categories response:", catRes.data);
+        console.log("SubCategories response:", subCatRes.data);
         setLoading(false);
         setCategories(catRes.data);
         setSubCategories(subCatRes.data);

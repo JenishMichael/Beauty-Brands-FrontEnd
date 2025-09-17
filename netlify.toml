@@ -1,0 +1,10 @@
+[dev]
+  port = 8888
+  framework = "vite"
+
+[[redirects]]
+  from = "/api/*"
+  to = "http://147.93.20.2:8080/:splat/"
+  status = 200
+  force = true
+
