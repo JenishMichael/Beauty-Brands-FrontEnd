@@ -225,8 +225,6 @@ export function DataCollectionFormPage() {
     Promise.all([
       axios.get(`${BASE_URL}/api/v1/categories/active`),
       axios.get(`${BASE_URL}/api/v1/subCategories/active`),
-      // axios.get(`/api/v1/categories/active`),
-      // axios.get(`/api/v1/subCategories/active`),
     ])
       .then(([catRes, subCatRes]) => {
         setLoading(false);
