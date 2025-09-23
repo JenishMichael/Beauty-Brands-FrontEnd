@@ -223,8 +223,9 @@ export function DataCollectionFormPage() {
   // useEffect For Fetching Both Category And SubCategory From DataBase
   useEffect(() => {
     Promise.all([
-      axios.get(`${BASE_URL}/api/v1/categories/active`),
-      axios.get(`${BASE_URL}/api/v1/subCategories/active`),
+      axios.get(`https://api.beautybrands.in/api/v1/categories/active`),
+      axios.get(`https://api.beautybrands.in/api/v1/subCategories/active`),
+
       // axios.get("/api/v1/categories/active"),
       // axios.get("/api/v1/subCategories/active"),
     ])
